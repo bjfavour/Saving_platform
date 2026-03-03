@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'accounts',
-    'savings',
+    'savings.apps.SavingsConfig',
     'subscriptions',
     'core',
 ]

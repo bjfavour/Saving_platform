@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Payment, Cashout
 from .services import process_cashout_request
-
+import os
 
 class PaymentSerializer(serializers.ModelSerializer):
 
@@ -10,10 +10,23 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["status", "user"]
 
-    def validate_month(self, value):
-        if value < 1 or value > 12:
-            raise serializers.ValidationError("Invalid month.")
-        return value
+    def validate_slip(self, file):
+
+        # 5MB limit
+        max_size = 5 * 1024 * 1024
+        if file.size > max_size:
+            raise serializers.ValidationError("File must not exceed 5MB.")
+
+        # Allowed file types
+        valid_extensions = [".pdf", ".jpg", ".jpeg", ".png"]
+        ext = os.path.splitext(file.name)[1].lower()
+
+        if ext not in valid_extensions:
+            raise serializers.ValidationError(
+                "Only PDF, JPG, JPEG, PNG files are allowed."
+            )
+
+        return file
 
 
 class CashoutSerializer(serializers.ModelSerializer):

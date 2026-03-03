@@ -9,25 +9,24 @@ class SubscriptionMiddleware:
 
     def __call__(self, request):
 
-        # Allow admin panel always
+        # Allow admin panel without subscription restriction
         if request.path.startswith("/admin/"):
             return self.get_response(request)
 
-        # Only protect API routes
-        if request.path.startswith("/api/"):
+        subscription = Subscriptions.objects.first()
 
-            subscription = Subscriptions.objects.first()
+        # If no subscription exists
+        if not subscription:
+            return JsonResponse(
+                {"detail": "Subscription not configured."},
+                status=403
+            )
 
-            if not Subscriptions:
-                return JsonResponse(
-                    {"detail": "Subscription Not Activated"},
-                    status=403
-                )
-
-            if not Subscriptions.check_active():
-                return JsonResponse(
-                    {"detail": "Subscription Expired"},
-                    status=403
-                )
+        # If subscription expired
+        if not subscription.check_active():
+            return JsonResponse(
+                {"detail": "Subscription expired."},
+                status=403
+            )
 
         return self.get_response(request)
