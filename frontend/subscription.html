@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Subscription Renewal | VSavings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+.subscription-wrapper{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#f4f6f9;
+}
+
+.subscription-card{
+background:white;
+padding:40px;
+border-radius:10px;
+width:400px;
+max-width:90%;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+.subscription-card h2{
+margin-bottom:10px;
+}
+
+.subscription-card p{
+color:#666;
+margin-bottom:25px;
+}
+
+.subscription-card input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:5px;
+font-size:16px;
+}
+
+.subscription-card button{
+width:100%;
+padding:12px;
+background:#2c3e50;
+color:white;
+border:none;
+border-radius:5px;
+font-size:16px;
+cursor:pointer;
+}
+
+.subscription-card button:hover{
+background:#1a252f;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="subscription-wrapper">
+
+<div class="subscription-card">
+
+<h2>Subscription Expired</h2>
+
+<p>Your VSavings subscription has expired.<br>
+Enter your renewal PIN to continue.</p>
+
+<input type="text" id="licenseKey" placeholder="Enter Subscription PIN">
+
+<button type="button" id="activateBtn">
+Activate Subscription
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const API_BASE = "http://127.0.0.1:8000/api"
+const token = localStorage.getItem("access")
+
+/* Protect page */
+if(!token){
+window.location.href = "login.html"
+}
+
+/* ===============================
+   ACTIVATE SUBSCRIPTION
+================================*/
+
+document.getElementById("activateBtn").addEventListener("click", async function(){
+
+const key = document.getElementById("licenseKey").value.trim()
+
+if(key === ""){
+alert("PIN code is required")
+return
+}
+
+try{
+
+const res = await fetch(`${API_BASE}/subscription/activate/`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + token
+},
+body:JSON.stringify({
+license_key:key
+})
+})
+
+const data = await res.json()
+
+if(res.ok){
+
+alert("Subscription activated successfully")
+
+window.location.href="dashboard.html"
+
+}else{
+
+console.log(data)
+
+alert(data.detail || "Invalid subscription PIN")
+
+}
+
+}catch(error){
+
+console.error(error)
+
+alert("Server connection error")
+
+}
+
+})
+
+</script>
+
+</body>
+</html>

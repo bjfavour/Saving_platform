@@ -103,18 +103,21 @@ def has_paid_this_month(user):
 
 def calculate_cashout_fee(user, requested_amount):
     """
-    If November payment approved → 10%
-    If NOT approved → 20%
+    Jan–Oct → 20%
+    Nov–Dec → 10%
     """
 
     requested_amount = Decimal(requested_amount)
 
-    if is_november_payment_approved(user):
-        fee_percentage = Decimal("10")
-    else:
+    current_month = timezone.now().month
+
+    if current_month < 11:
         fee_percentage = Decimal("20")
+    else:
+        fee_percentage = Decimal("10")
 
     fee_amount = (requested_amount * fee_percentage) / Decimal("100")
+
     net_amount = requested_amount - fee_amount
 
     return fee_percentage, fee_amount, net_amount

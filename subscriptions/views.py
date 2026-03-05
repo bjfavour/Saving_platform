@@ -10,16 +10,16 @@ class ActivateSubscriptionView(APIView):
 
     def post(self, request):
 
-        pin_code = request.data.get("pin_code")
+        license_key = request.data.get("license_key")
 
-        if not pin_code:
+        if not license_key:
             return Response(
                 {"detail": "PIN code is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
-            result = activate_subscription(pin_code)
+            result = activate_subscription(license_key)
             return Response(result)
 
         except ValueError as e:

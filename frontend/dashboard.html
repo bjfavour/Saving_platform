@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | VSavings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">💰 VSavings</div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="active">Dashboard</a>
+            <a href="/frontend/make-payment.html">Make Payment</a>
+            <a href="/frontend/cashout.html">Cashout</a>
+            <a href="/frontend/transactions.html">Transaction History</a>
+            <a href="/frontend/profile.html">Profile</a>
+            <a href="subscription.html">Subscription</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <h2 id="welcomeText">Welcome</h2>
+            <div class="topbar-right">
+                <span id="statusText">Status: Active</span>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <section class="dashboard-content">
+
+            <!-- SUMMARY CARDS -->
+            <div class="card-grid">
+
+                <div class="dashboard-card">
+                    <h3>Total Savings</h3>
+                    <p id="totalPayments">₦ 0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Total Fees</h3>
+                    <p id="totalFees">₦ 0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Total Cashouts</h3>
+                    <p id="totalCashouts">₦ 0</p>
+                </div>
+
+                <div class="dashboard-card highlight">
+                    <h3>Available Balance</h3>
+                    <p id="availableBalance">₦ 0</p>
+                </div>
+
+            </div>
+
+            <!-- RECENT TRANSACTIONS -->
+            <div class="recent-transactions">
+                <h3>Recent Transactions</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTransactions">
+                        <!-- JS will insert rows here -->
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script src="/frontend/js/dashboard.js"></script>
+
+</body>
+</html>

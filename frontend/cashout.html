@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cashout | VSavings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+```
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">💰 VSavings</div>
+
+    <nav class="sidebar-nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="make-payment.html">Make Payment</a>
+        <a href="cashout.html" class="active">Cashout</a>
+        <a href="transactions.html">Transaction History</a>
+        <a href="profile.html">Profile</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+    <header class="topbar">
+        <h2>Request Cashout</h2>
+    </header>
+
+    <section class="cashout-section">
+
+        <!-- BALANCE CARD -->
+        <div class="balance-card">
+            <h3>Available Balance</h3>
+
+            <p id="availableBalance" class="balance-amount">₦ 0</p>
+
+            <small>Administrative fee applies upon cashout.</small>
+        </div>
+
+        <!-- CASHOUT FORM -->
+        <div class="cashout-card">
+            <form id="cashoutForm">
+
+                <div class="form-group">
+                    <label>Enter Amount to Withdraw (₦)</label>
+
+                    <input
+                        type="number"
+                        id="cashoutAmount"
+                        placeholder="Enter amount"
+                        required
+                    >
+                </div>
+
+                <div class="warning-box">
+                    ⚠ If November payment is not approved,
+                    a total of 20% will be deducted.
+                    Otherwise, only 10% administrative fee applies.
+                </div>
+
+                <button type="submit" class="btn-primary full-width">
+                    Submit Cashout Request
+                </button>
+
+            </form>
+        </div>
+
+    </section>
+
+</div>
+```
+
+</div>
+
+<script>
+
+const token = localStorage.getItem("access");
+
+if(!token){
+    window.location.href = "login.html";
+}
+
+
+// LOAD REAL BALANCE
+fetch("http://127.0.0.1:8000/api/savings/summary/", {
+
+    method: "GET",
+
+    headers:{
+        "Authorization": "Bearer " + token
+    }
+
+})
+.then(response => {
+
+    if(response.status === 403){
+
+        return response.json().then(data=>{
+
+            if(data.detail === "Subscription expired."){
+                window.location.href="subscription.html"
+            }
+
+        });
+
+    }
+
+    return response.json()
+
+})
+.then(data=>{
+
+    if(!data) return
+
+    document.getElementById("availableBalance").innerText =
+        "₦ " + data.available_balance
+
+})
+.catch(error=>{
+    console.log(error)
+})
+
+
+
+
+// CASHOUT REQUEST
+const form = document.getElementById("cashoutForm")
+
+form.addEventListener("submit", function(e){
+
+    e.preventDefault()
+
+    const amount = document.getElementById("cashoutAmount").value
+
+
+    fetch("http://127.0.0.1:8000/api/savings/cashouts/",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+        },
+
+        body: JSON.stringify({
+            requested_amount: amount
+        })
+
+    })
+    .then(response=>response.json())
+
+    .then(data=>{
+
+        alert("Cashout request submitted successfully. Await admin approval.")
+
+        form.reset()
+
+    })
+    .catch(error=>{
+
+        console.log(error)
+
+        alert("Error submitting cashout request")
+
+    })
+
+})
+
+
+
+
+// LOGOUT
+document.getElementById("logoutBtn")
+.addEventListener("click", function(){
+
+    localStorage.removeItem("access")
+    localStorage.removeItem("refresh")
+
+    window.location.href="login.html"
+
+})
+
+</script>
+
+</body>
+</html>

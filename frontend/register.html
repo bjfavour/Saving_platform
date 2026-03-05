@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | VSavings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+<body class="login-body">
+
+<div class="login-wrapper">
+
+    <div class="login-left">
+        <h1>Create Account</h1>
+        <p>
+            Join VSavings and start saving securely.
+            Your account must be approved by admin.
+        </p>
+    </div>
+
+    <div class="login-right">
+        <div class="login-card">
+            <h2>Register</h2>
+
+            <form id="registerForm">
+
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Telephone</label>
+                    <input type="text" id="telephone" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+
+                <button type="submit" class="btn-primary full-width">
+                    Register
+                </button>
+
+                <p class="login-footer">
+                    Already have an account?
+                    <a href="login.html">Login</a>
+                </p>
+
+            </form>
+
+            <div id="registerMessage" class="message"></div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="/frontend/js/register.js"></script>
+
+</body>
+</html>

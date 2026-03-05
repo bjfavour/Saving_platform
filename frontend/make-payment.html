@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Make Payment | VSavings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">💰 VSavings</div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="make-payment.html" class="active">Make Payment</a>
+            <a href="/frontend/cashout.html">Cashout</a>
+            <a href="/frontend/transactions.html">Transaction History</a>
+            <a href="/frontend/profile.html">Profile</a>
+            <a href="#">Subscription</a>
+            <a href="logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <header class="topbar">
+            <h2>Make Savings Payment</h2>
+        </header>
+
+        <section class="payment-section">
+
+            <!-- ACCOUNT DETAILS -->
+            <div class="account-box">
+                <h3>Official Payment Account</h3>
+                <p><strong>Bank Name:</strong> Access Bank</p>
+                <p><strong>Account Name:</strong> VSavings Platform</p>
+                <p><strong>Account Number:</strong> 0123456789</p>
+            </div>
+
+            <!-- PAYMENT FORM -->
+            <div class="payment-card">
+      <form id="paymentForm">
+
+<div class="form-group">
+<label>Select Month</label>
+
+<select id="month" required>
+<option value="">-- Select Month --</option>
+<option value="1">January</option>
+<option value="2">February</option>
+<option value="3">March</option>
+<option value="4">April</option>
+<option value="5">May</option>
+<option value="6">June</option>
+<option value="7">July</option>
+<option value="8">August</option>
+<option value="9">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
+
+</div>
+
+
+<div class="form-group">
+<label>Amount (₦)</label>
+
+<input
+type="number"
+id="amount"
+placeholder="Enter amount"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+<label>Upload Payment Slip</label>
+
+<input
+type="file"
+id="slip"
+accept=".jpg,.jpeg,.png,.pdf"
+required
+>
+
+<small>Accepted formats: JPG, PNG, PDF (Max 5MB)</small>
+
+</div>
+
+
+<button
+type="submit"
+class="btn-primary full-width"
+>
+Submit Payment
+</button>
+
+</form>
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+<script src="/frontend/js/payment.js"></script>
+
+</body>
+</html>

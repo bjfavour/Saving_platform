@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Transaction History | VSavings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<div class="sidebar-logo">💰 VSavings</div>
+
+<nav class="sidebar-nav">
+<a href="dashboard.html">Dashboard</a>
+<a href="make-payment.html">Make Payment</a>
+<a href="cashout.html">Cashout</a>
+<a href="transactions.html" class="active">Transaction History</a>
+<a href="profile.html">Profile</a>
+<a href="subscription.html">Subscription</a>
+<a href="#" id="logoutBtn">Logout</a>
+</nav>
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+<header class="topbar">
+<h2>Transaction History</h2>
+</header>
+
+
+<!-- SUMMARY CARDS -->
+<div class="card-grid">
+
+<div class="dashboard-card">
+<h3>Total Payments</h3>
+<p id="totalPayments">₦0</p>
+</div>
+
+<div class="dashboard-card">
+<h3>Total Fees</h3>
+<p id="totalFees">₦0</p>
+</div>
+
+<div class="dashboard-card">
+<h3>Total Cashouts</h3>
+<p id="totalCashouts">₦0</p>
+</div>
+
+<div class="dashboard-card highlight">
+<h3>Available Balance</h3>
+<p id="availableBalance">₦0</p>
+</div>
+
+</div>
+
+
+
+<!-- TRANSACTION TABLE -->
+<div class="recent-transactions">
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Amount</th>
+<th>Reference</th>
+</tr>
+</thead>
+
+<tbody id="transactionTable">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+</div>
+
+
+<script>
+
+const API_BASE = "http://127.0.0.1:8000/api"
+
+const token = localStorage.getItem("access")
+
+if(!token){
+window.location.href = "login.html"
+}
+
+
+async function loadTransactions(){
+
+try{
+
+/* GET PAYMENTS */
+const paymentsRes = await fetch(`${API_BASE}/savings/payments/`,{
+headers:{Authorization:`Bearer ${token}`}
+})
+
+const payments = await paymentsRes.json()
+
+
+/* GET CASHOUTS */
+const cashoutsRes = await fetch(`${API_BASE}/savings/cashouts/`,{
+headers:{Authorization:`Bearer ${token}`}
+})
+
+const cashouts = await cashoutsRes.json()
+
+
+let totalPayments = 0
+let totalCashouts = 0
+let totalFees = 0
+
+const table = document.getElementById("transactionTable")
+
+table.innerHTML = ""
+
+
+/* PAYMENTS */
+payments.forEach(p=>{
+
+totalPayments += Number(p.amount)
+
+table.innerHTML += `
+<tr>
+<td>${p.created_at || "-"}</td>
+<td>Payment</td>
+<td>₦ ${p.amount}</td>
+<td>PAY-${p.id}</td>
+</tr>
+`
+
+})
+
+
+/* CASHOUTS */
+cashouts.forEach(c=>{
+
+totalCashouts += Number(c.net_amount)
+totalFees += Number(c.fee_amount)
+
+table.innerHTML += `
+<tr>
+<td>${c.created_at || "-"}</td>
+<td>Cashout</td>
+<td>₦ ${c.net_amount}</td>
+<td>CASH-${c.id}</td>
+</tr>
+`
+
+table.innerHTML += `
+<tr>
+<td>${c.created_at || "-"}</td>
+<td>Fee</td>
+<td>₦ ${c.fee_amount}</td>
+<td>FEE-${c.id}</td>
+</tr>
+`
+
+})
+
+
+const balance = totalPayments - totalCashouts - totalFees
+
+
+document.getElementById("totalPayments").innerText = "₦ " + totalPayments
+document.getElementById("totalCashouts").innerText = "₦ " + totalCashouts
+document.getElementById("totalFees").innerText = "₦ " + totalFees
+document.getElementById("availableBalance").innerText = "₦ " + balance
+
+}catch(error){
+
+console.log(error)
+
+}
+
+}
+
+
+loadTransactions()
+
+
+
+/* LOGOUT */
+
+document.getElementById("logoutBtn").onclick = function(){
+
+localStorage.removeItem("access")
+localStorage.removeItem("refresh")
+
+window.location.href = "login.html"
+
+}
+
+</script>
+
+
+</body>
+</html>

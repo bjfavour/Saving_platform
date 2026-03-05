@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import User
 
 User = get_user_model()
 
@@ -45,3 +46,19 @@ class CustomLoginSerializer(TokenObtainPairSerializer):
             "username": user.username,
             "password": password
         })
+        
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "email",
+            "telephone",
+            "full_name",
+            "address",
+            "bank_name",
+            "bank_account_number",
+            "profile_picture",
+        ]

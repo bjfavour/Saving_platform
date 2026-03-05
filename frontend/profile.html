@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile | VSavings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<div class="sidebar-logo">💰 VSavings</div>
+
+<nav class="sidebar-nav">
+<a href="dashboard.html">Dashboard</a>
+<a href="make-payment.html">Make Payment</a>
+<a href="cashout.html">Cashout</a>
+<a href="transactions.html">Transaction History</a>
+<a href="profile.html" class="active">Profile</a>
+<a href="subscription.html">Subscription</a>
+<a href="#" id="logoutBtn">Logout</a>
+</nav>
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+<header class="topbar">
+<h2>My Profile</h2>
+</header>
+
+<section class="profile-section">
+
+<div class="profile-grid">
+
+<!-- PROFILE INFO -->
+<div class="profile-card">
+
+<div class="profile-picture">
+
+<img id="profileImage" width="120" height="120" style="border-radius:50%">
+
+<input type="file" id="profilePicture">
+
+</div>
+
+<h3>Personal Information</h3>
+
+<div id="successMessage" style="color:green; margin-bottom:10px;"></div>
+
+<form id="profileForm">
+
+<div class="form-group">
+<label>Full Name</label>
+<input type="text" id="full_name">
+</div>
+
+<div class="form-group">
+<label>Telephone</label>
+<input type="text" id="telephone">
+</div>
+
+<div class="form-group">
+<label>Address</label>
+<input type="text" id="address">
+</div>
+
+<h3>Bank Details</h3>
+
+<div class="form-group">
+<label>Bank Name</label>
+<input type="text" id="bank_name">
+</div>
+
+<div class="form-group">
+<label>Account Number</label>
+<input type="text" id="bank_account_number">
+</div>
+
+<button type="submit" class="btn-primary" id="updateBtn">
+Update Profile
+</button>
+
+</form>
+
+</div>
+
+
+
+<!-- PASSWORD CHANGE -->
+<div class="profile-card">
+
+<h3>Change Password</h3>
+
+<form id="passwordForm">
+
+<div class="form-group">
+<label>Current Password</label>
+<input type="password" id="current_password">
+</div>
+
+<div class="form-group">
+<label>New Password</label>
+<input type="password" id="new_password">
+</div>
+
+<div class="form-group">
+<label>Confirm New Password</label>
+<input type="password" id="confirm_password">
+</div>
+
+<button type="submit" class="btn-primary">
+Change Password
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+</div>
+
+
+<script>
+
+const API_BASE = "http://127.0.0.1:8000/api"
+const token = localStorage.getItem("access")
+
+if(!token){
+window.location.href = "login.html"
+}
+
+
+/* LOAD PROFILE */
+
+async function loadProfile(){
+
+try{
+
+const res = await fetch(`${API_BASE}/accounts/profile/`,{
+headers:{
+Authorization:`Bearer ${token}`
+}
+})
+
+const data = await res.json()
+
+document.getElementById("full_name").value = data.full_name || ""
+document.getElementById("telephone").value = data.telephone || ""
+document.getElementById("address").value = data.address || ""
+document.getElementById("bank_name").value = data.bank_name || ""
+document.getElementById("bank_account_number").value = data.bank_account_number || ""
+
+if(data.profile_picture){
+document.getElementById("profileImage").src = data.profile_picture
+}
+
+}catch(error){
+
+console.log("Error loading profile", error)
+
+}
+
+}
+
+loadProfile()
+
+
+
+/* UPDATE PROFILE */
+
+document.getElementById("profileForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const btn = document.getElementById("updateBtn")
+btn.disabled = true
+btn.innerText = "Saving..."
+
+const formData = new FormData()
+
+formData.append("full_name",document.getElementById("full_name").value)
+formData.append("telephone",document.getElementById("telephone").value)
+formData.append("address",document.getElementById("address").value)
+formData.append("bank_name",document.getElementById("bank_name").value)
+formData.append("bank_account_number",document.getElementById("bank_account_number").value)
+
+const file = document.getElementById("profilePicture").files[0]
+
+if(file){
+formData.append("profile_picture",file)
+}
+
+try{
+
+const response = await fetch(`${API_BASE}/accounts/profile/`,{
+method:"PATCH",
+headers:{
+Authorization:`Bearer ${token}`
+},
+body:formData
+})
+
+if(response.ok){
+
+document.getElementById("successMessage").innerText = "✓ Profile updated successfully"
+
+await loadProfile()
+
+}else{
+
+document.getElementById("successMessage").innerText = "Error updating profile"
+
+}
+
+}catch(error){
+
+console.log(error)
+
+}
+
+btn.disabled = false
+btn.innerText = "Update Profile"
+
+})
+
+
+
+/* CHANGE PASSWORD */
+
+document.getElementById("passwordForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const current = document.getElementById("current_password").value
+const newpass = document.getElementById("new_password").value
+const confirm = document.getElementById("confirm_password").value
+
+if(newpass !== confirm){
+alert("Passwords do not match")
+return
+}
+
+await fetch(`${API_BASE}/accounts/change-password/`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+current_password:current,
+new_password:newpass
+})
+})
+
+alert("Password changed successfully")
+
+})
+
+
+
+/* LOGOUT */
+
+document.getElementById("logoutBtn").onclick = function(){
+
+localStorage.removeItem("access")
+localStorage.removeItem("refresh")
+
+window.location.href = "login.html"
+
+}
+
+</script>
+
+
+</body>
+</html>
