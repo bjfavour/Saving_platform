@@ -34,9 +34,18 @@ SIMPLE_JWT = {
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = False
+
+ALLOWED_HOSTS = [
+    "web-production-12c85.up.railway.app",
+    ".railway.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://web-production-12c85.up.railway.app",
+]
 
 AUTH_USER_MODEL = 'accounts.User'
 
